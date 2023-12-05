@@ -30,7 +30,6 @@ async function readJson() {
 }
 
 app.get('/talker/', async (_req, res) => {
-
   try {
     res.status(200).json(await readJson());
   } catch (error) {
@@ -39,14 +38,12 @@ app.get('/talker/', async (_req, res) => {
 });
 
 app.get('/talker/:id', async (req, res) => {
-
   const { id } = req.params;
   const allTalkers = await readJson();
   const currTalker = allTalkers.find((talker) => talker.id === +id);
-
   if (currTalker !== undefined) {
     res.status(200).json(currTalker);
   } else {
-    res.status(404).json({ message: "Pessoa palestrante não encontrada" });
+    res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
   }
-})
+});
