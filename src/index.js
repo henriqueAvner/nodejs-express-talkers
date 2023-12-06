@@ -78,3 +78,27 @@ app.post('/talker', validadeToken,
     await fs.writeFile(talkerPath, newAllTalkers);
     res.status(201).json(newTalker);
   });
+
+app.put('/talker/:id', validadeToken,
+  validateName,
+  validateAge,
+  validateTalk,
+  validateWatchedAt,
+  validateRate,
+  async (req, res) => {
+    const { id } = req.params;
+    const { name, age, talk } = req.body;
+    const allTalkers = await readJson();
+    const updateTalker = allTalkers.find((talker) => talker.id === +id);
+    if (!updateTalker) {
+      return res.status(404).json({
+        message: 'Pessoa palestrante não encontrada',
+      });
+    }
+    updateTalker.name = name;
+    updateTalker.age = age;
+    updateTalker.talk = talk;
+    const newTalker = JSON.stringify(allTalkers);
+    await fs.writeFile(talkerPath, newTalker);
+    return res.status(200).json(updateTalker);
+  });
