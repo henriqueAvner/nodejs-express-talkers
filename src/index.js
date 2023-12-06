@@ -102,3 +102,13 @@ app.put('/talker/:id', validadeToken,
     await fs.writeFile(talkerPath, newTalker);
     return res.status(200).json(updateTalker);
   });
+
+app.delete('/talker/:id', validadeToken, async (req, res) => {
+  const { id } = req.params;
+  const talkers = await readJson();
+  const arrayPosition = talkers.findIndex((talker) => talker.id === +id);
+  talkers.splice(arrayPosition, 1);
+  const newTalker = JSON.stringify(talkers);
+  await fs.writeFile(talkerPath, newTalker);
+  return res.status(204).end();
+});
