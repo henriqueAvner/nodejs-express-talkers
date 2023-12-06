@@ -4,6 +4,12 @@ const path = require('path');
 const generateToken = require('./utils/generateToken');
 const validateLogin = require('./middleware/validateLogin');
 const validatePass = require('./middleware/validatePass');
+const validadeToken = require('./utils/validadeToken');
+const validateName = require('./middleware/validateName');
+const validateAge = require('./middleware/validateAge');
+const validateTalk = require('./middleware/validateTalk');
+const validateRate = require('./middleware/validateRate');
+const validateWatchedAt = require('./middleware/validateWatchedAt');
 
 const app = express();
 app.use(express.json());
@@ -55,3 +61,20 @@ app.post('/login', validateLogin, validatePass, (_req, res) => {
   const token = generateToken();
   return res.status(200).json({ token });
 });
+
+app.post('/talker', validadeToken,
+  validateName,
+  validateAge,
+  validateTalk,
+  validateWatchedAt,
+  validateRate, async (req, res) => {
+    const currTalker = req.body;
+    const allTalkers = await readJson();
+    const newTalker = {
+      id: allTalkers[allTalkers.length - 1].id + 1,
+      ...currTalker,
+    };
+    const newAllTalkers = JSON.stringify([...allTalkers, newTalker]);
+    await fs.writeFile(talkerPath, newAllTalkers);
+    res.status(201).json(newTalker);
+  });
