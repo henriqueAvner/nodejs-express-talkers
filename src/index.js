@@ -10,6 +10,7 @@ const validateAge = require('./middleware/validateAge');
 const validateTalk = require('./middleware/validateTalk');
 const validateRate = require('./middleware/validateRate');
 const validateWatchedAt = require('./middleware/validateWatchedAt');
+const validateHeaderRate = require('./middleware/validateHeaderRate');
 
 const app = express();
 app.use(express.json());
@@ -126,3 +127,18 @@ app.delete('/talker/:id', validadeToken, async (req, res) => {
   await fs.writeFile(talkerPath, newTalker);
   return res.status(204).end();
 });
+
+app.get('/talker/search', validadeToken, validateHeaderRate, async (req, res) => {
+  const { rate, q } = req.query;
+  const allTalkers = await readJson();
+
+  if (!q) {
+    const rateFilter = allTalkers.filter(({ talk }) => talk.rate === +rate);
+    return res.status(200).json(rateFilter);
+  }
+  const filterRateAndName = allTalkers.filter(({ name }) => name.includes(q))
+    .filter(({ talk }) => talk.rate === +rate);
+
+  return res.status(200).json(filterRateAndName);
+
+})
